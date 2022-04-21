@@ -313,7 +313,7 @@ body._hold {
 }
 
 .item-game {
-  background: #019fe0;
+  background: #019fe0 !important;
 }
 .item-game__body {
   margin: 0.9375rem;
