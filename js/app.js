@@ -75,15 +75,15 @@
         }), delay_off);
     }
     function get_random_animate() {
-        let number = get_random(0, 4);
-        let arr = [ "jump", "jump-2", "rotate", "scale" ];
-        let block_icon = document.querySelector(".item-money__icon");
-        if (block_icon.classList.contains("_anim-icon-jump")) block_icon.classList.remove("_anim-icon-jump"); else if (block_icon.classList.contains("_anim-icon-jump-2")) block_icon.classList.remove("_anim-icon-jump-2"); else if (block_icon.classList.contains("_anim-icon-rotate")) block_icon.classList.remove("_anim-icon-rotate"); else if (block_icon.classList.contains("_anim-icon-scale")) block_icon.classList.remove("_anim-icon-scale");
+        let number = get_random(0, 3);
+        let arr = [ "jump", "scale", "rotate" ];
+        let block_icon = document.querySelector(".bank__body img");
+        if (block_icon.classList.contains("_anim-icon-jump")) block_icon.classList.remove("_anim-icon-jump"); else if (block_icon.classList.contains("_anim-icon-scale")) block_icon.classList.remove("_anim-icon-scale"); else if (block_icon.classList.contains("_anim-icon-rotate")) block_icon.classList.remove("_anim-icon-rotate");
         block_icon.classList.add(`_anim-icon-${arr[number]}`);
     }
-    if (document.querySelector(".item-money__icon")) setInterval((() => {
+    if (document.querySelector(".bank__body img")) setInterval((() => {
         get_random_animate();
-    }), 12e3);
+    }), 2e4);
     let config = {
         price_tank_2: 8e3,
         price_tank_3: 12e3
@@ -144,6 +144,12 @@
         document.querySelector(".tail").classList.add("_hide");
         document.querySelector(".item-game__coin").classList.remove("_rotate-low");
     }
+    function add_remove_active_class(block) {
+        document.querySelector(block).classList.add("_active");
+        setTimeout((() => {
+            document.querySelector(block).classList.remove("_active");
+        }), 1e3);
+    }
     function check_mingame_over(num) {
         let bet = +sessionStorage.getItem("bet");
         let current_bet = sessionStorage.getItem("current-bet");
@@ -154,10 +160,12 @@
             add_money(count_win, ".check", 1e3, 1500);
             document.querySelector(".win__text").textContent = count_win;
             storage_min.current_win += count_win;
+            add_remove_active_class(".game__block_head");
             write_count(".game__sub-count_head", `+${storage_min.current_win}`);
         } else if (1 == num && "tail" == current_bet) {
             document.querySelector(".loose").classList.add("_active");
             storage_min.current_loose -= bet;
+            add_remove_active_class(".game__block_tail");
             write_count(".game__sub-count_tail", storage_min.current_loose);
         } else if (2 == num && "tail" == current_bet) {
             document.querySelector(".win").classList.add("_active");
@@ -165,10 +173,12 @@
             add_money(count_win, ".check", 1e3, 1500);
             document.querySelector(".win__text").textContent = count_win;
             storage_min.current_win += count_win;
+            add_remove_active_class(".game__block_head");
             write_count(".game__sub-count_head", `+${storage_min.current_win}`);
         } else if (2 == num && "head" == current_bet) {
             document.querySelector(".loose").classList.add("_active");
             storage_min.current_loose -= bet;
+            add_remove_active_class(".game__block_tail");
             write_count(".game__sub-count_tail", storage_min.current_loose);
         }
     }
@@ -186,6 +196,9 @@
         if (!sessionStorage.getItem("tank-active")) sessionStorage.setItem("tank-active", 1);
         create_hero();
         sessionStorage.setItem("bet", 10);
+        setTimeout((() => {
+            document.querySelector(".catgame__hero").classList.remove("_start-anim");
+        }), 1500);
     }
     function move_cat(num) {
         cat_config.timerId = setInterval((() => {
@@ -325,7 +338,7 @@
             document.querySelector(".win__text").textContent = prize;
             setTimeout((() => {
                 document.querySelector(".win").classList.add("_active");
-            }), 1e3);
+            }), 200);
         }
     }));
     window["FLS"] = true;
