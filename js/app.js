@@ -85,8 +85,8 @@
         get_random_animate();
     }), 12e3);
     let config = {
-        price_tank_2: 3e4,
-        price_tank_3: 5e4
+        price_tank_2: 8e3,
+        price_tank_3: 12e3
     };
     function remove_inner_btn(number_tank) {
         document.querySelector(`.shop__button-tank_${number_tank}`).classList.remove("_not-purchased");
@@ -185,6 +185,7 @@
     if (document.querySelector(".catgame")) {
         if (!sessionStorage.getItem("tank-active")) sessionStorage.setItem("tank-active", 1);
         create_hero();
+        sessionStorage.setItem("bet", 10);
     }
     function move_cat(num) {
         cat_config.timerId = setInterval((() => {
@@ -271,6 +272,7 @@
             add_hold_btn(".button_head");
             add_hold_btn(".button_tail");
             add_hold_btn(".bets");
+            add_hold_btn(".item-game__button_bet");
             delete_money(+sessionStorage.getItem("bet"), ".check");
             setTimeout((() => {
                 rotate_coin();
@@ -297,6 +299,7 @@
                 document.querySelector(".tail").classList.remove("_hide");
                 remove_hold_btn(".button_head");
                 remove_hold_btn(".button_tail");
+                remove_hold_btn(".item-game__button_bet");
                 remove_class(".button", "_selected");
                 sessionStorage.setItem("current-bet", "empty");
             } else if (document.querySelector(".catgame")) {
