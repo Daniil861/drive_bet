@@ -84,6 +84,7 @@
     if (document.querySelector(".bank__body img")) setInterval((() => {
         get_random_animate();
     }), 2e4);
+    if (document.querySelector(".main__body") && document.querySelector(".preloader").classList.contains("_hide")) document.querySelector(".main__body").classList.add("_active");
     let config = {
         price_tank_2: 8e3,
         price_tank_3: 12e3
@@ -111,6 +112,7 @@
     if (document.querySelector(".shop")) {
         if (sessionStorage.getItem("tank-2")) remove_inner_btn(2); else document.querySelector(".bank__count_tank-2").textContent = config.price_tank_2;
         if (sessionStorage.getItem("tank-3")) remove_inner_btn(3); else document.querySelector(".bank__count_tank-3").textContent = config.price_tank_3;
+        sessionStorage.setItem("tank-active", 1);
     }
     let storage_min = {
         current_win: 0,
@@ -198,9 +200,12 @@
         sessionStorage.setItem("bet", 10);
         setTimeout((() => {
             document.querySelector(".catgame__hero").classList.remove("_start-anim");
-        }), 1500);
+        }), 2e3);
     }
     function move_cat(num) {
+        let current_anim = "_active-1";
+        if (2 == +sessionStorage.getItem("tank-active")) current_anim = "_active-2"; else if (3 == +sessionStorage.getItem("tank-active")) current_anim = "_active-3";
+        document.querySelector(".catgame__hero").classList.add(current_anim);
         cat_config.timerId = setInterval((() => {
             cat_config.current_left += cat_config.speed;
             document.querySelector(".catgame__hero").style.left = `${cat_config.current_left}%`;
@@ -208,13 +213,16 @@
             if (83 == cat_config.current_left) clearInterval(cat_config.timerId);
             if (cat_config.current_position >= num) {
                 clearInterval(cat_config.timerId);
-                document.querySelector(".catgame__hero").classList.remove("_active");
+                remove_cat_anim();
                 create_fire();
                 setTimeout((() => {
                     document.querySelector(".loose").classList.add("_active");
                 }), 1e3);
             }
         }), 50);
+    }
+    function remove_cat_anim() {
+        if (document.querySelector(".catgame__hero").classList.contains("_active-1")) document.querySelector(".catgame__hero").classList.remove("_active-1"); else if (document.querySelector(".catgame__hero").classList.contains("_active-2")) document.querySelector(".catgame__hero").classList.remove("_active-2"); else if (document.querySelector(".catgame__hero").classList.contains("_active-3")) document.querySelector(".catgame__hero").classList.remove("_active-3");
     }
     function create_hero() {
         let image = document.createElement("img");
@@ -243,6 +251,7 @@
             sessionStorage.setItem("preloader", true);
             preloader.classList.add("_hide");
             wrapper.classList.add("_visible");
+            if (document.querySelector(".main__body") && document.querySelector(".preloader").classList.contains("_hide")) document.querySelector(".main__body").classList.add("_active");
         }
         if (targetElement.closest(".shop__button-tank_1")) {
             sessionStorage.setItem("tank-active", 1);
@@ -326,13 +335,13 @@
             add_hold_btn(".bets");
             add_hold_btn(".catgame__button");
             delete_money(+sessionStorage.getItem("bet"), ".check");
-            document.querySelector(".catgame__hero").classList.add("_active");
             let random_width = get_random(0, cat_config.width - 200);
             move_cat(random_width);
         }
-        if (targetElement.closest(".catgame__hero") && targetElement.closest(".catgame__hero").classList.contains("_active")) {
+        let current_tank = sessionStorage.getItem("tank-active");
+        if (targetElement.closest(".catgame__hero") && targetElement.closest(".catgame__hero").classList.contains(`_active-${current_tank}`)) {
             clearInterval(cat_config.timerId);
-            document.querySelector(".catgame__hero").classList.remove("_active");
+            document.querySelector(".catgame__hero").classList.remove(`_active-${current_tank}`);
             let prize = get_coeff() * +sessionStorage.getItem("bet");
             add_money(prize, ".check", 1e3, 2e3);
             document.querySelector(".win__text").textContent = prize;
